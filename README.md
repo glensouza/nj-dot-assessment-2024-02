@@ -19,7 +19,7 @@ Department exposure, explains what purpose of department is.
 - CSS
 - JavaScript
 
-A job runs overnight to update the website with the latest information. The job is written in SQL Agent activeX and VBScript and PowerShell runs read database. The job then updates the website with the latest information injecting HTML and CSS.
+A job runs overnight at interval to update the website with the latest information. The job is written in SQL Agent activeX and VBScript and PowerShell runs read database. The job then updates the website with the latest information injecting HTML and CSS.
 
 Currently hosted in Azure for lower environments and PROD is on prem.
 
@@ -38,7 +38,7 @@ Naming convention:
 - S = Non-Prod
 - E = Prod
 
-They all sue the same file share.
+They all share the same file share.
 
 ## Intranet website hosted on prem
 
@@ -56,7 +56,7 @@ Has a login experience with usernames and password stored in a databases. Would 
 
 ![intranet-looged-in](./intranet-logged-in.png)
 
-Has personalized information for each user. Each application is written in different technology: asp classic or .net. Some applications display a Crystal Report.
+Has personalized information for each user. Each application is written in different technology: asp classic or .net framework. Some applications display a Crystal Report.
 
 ![crystal-report-request](./crystal-report-request.png)
 
@@ -80,4 +80,4 @@ New documents are uploaded to library server via web page:
 
 ![upload-to-library-server](./upload-to-library-server.png)
 
-Those files are used in intranet site for things like press releases, etc. in PDF format. It's a multi-step process that could be improved with dynamic site hitting an API instead. A SQL Stored Procedure is used to produce the dynamic HTML for the page. Then a sync job runs to update the website with the latest information.
+Those files are used in both intranet and internet sites for things like press releases, etc. in PDF format. It's a multi-step process that could be improved with dynamic site hitting an API instead. A SQL Stored Procedure is used to produce the dynamic HTML for the page. Then a sync job runs to update the website with the latest information.
