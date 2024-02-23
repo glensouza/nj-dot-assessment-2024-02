@@ -82,6 +82,9 @@ resource minimalApiWebApp 'Microsoft.Web/sites@2023-01-01' = {
   name: minimalApiAppName
   location: location
   kind: 'app'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     enabled: true
     serverFarmId: appServicePlanWebApps.id
@@ -92,6 +95,9 @@ resource webApiApp 'Microsoft.Web/sites@2023-01-01' = {
   name: webApiAppName
   location: location
   kind: 'app'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlanWebApps.id
   }
@@ -101,6 +107,9 @@ resource webApp 'Microsoft.Web/sites@2023-01-01' = {
   name: webAppName
   location: location
   kind: 'app'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlanWebApps.id
   }
