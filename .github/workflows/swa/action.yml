@@ -1,0 +1,54 @@
+name: Static Web Apps Build and Deploy
+
+description: "Build and deploy Function App"
+
+inputs:
+  AZURE_TENANT_ID:
+    required: true
+  AZURE_SUBSCRIPTION_ID:
+    required: true
+  AZURE_CLIENT_ID:
+    required: true
+  RESOURCE_NAME:
+    required: true
+  GITHUB_TOKEN:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    # Log into Azure
+  - name: Login via Azure
+    uses: azure/login@v1
+    with:
+      tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+      subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.AZURE_CLIENT_ID }}
+  
+  - name: Checkout code
+    uses: actions/checkout@v3
+
+  - name: Get SWA Tokens
+    id: swatoken
+    uses: azure/CLI@v1
+    with:
+      azcliversion: latest
+      inlineScript: echo SWA_TOKEN=$(az staticwebapp secrets list --name ${{ inputs.RESOURCE_NAME }}web --query 'properties.apiKey') | tr -d '"' >> "$GITHUB_OUTPUT"
+
+  - name: Build And Deploy
+    id: builddeploy
+    uses: Azure/static-web-apps-deploy@v1
+    with:
+      azure_static_web_apps_api_token: ${{ steps.swatoken.outputs.SWA_TOKEN }}
+      repo_token: ${{ inputs.GITHUB_TOKEN }}
+      action: "upload"
+      app_location: "NJDOT.Web.BlazorWASM"
+      api_location: "NJDOT.Web.API"
+      output_location: "wwwroot"
+
+  - name: Reset SWA Token
+    uses: azure/CLI@v1
+    with:
+      azcliversion: latest
+      inlineScript: az staticwebapp secrets reset-api-key --name ${{ inputs.RESOURCE_NAME }}web --resource-group ${{ inputs.RESOURCE_NAME }} --no-wait

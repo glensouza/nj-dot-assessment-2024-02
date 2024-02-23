@@ -1,12 +1,14 @@
-﻿namespace NJDOT.Services;
+﻿using NJDOT.Models;
+
+namespace NJDOT.Services;
 
 public class NameGenerator
 {
-    private List<string> names;
+    private readonly List<string> names = [];
 
     public NameGenerator()
     {
-        IEnumerable<string> lines = File.ReadLines("names.txt");
+        IEnumerable<string> lines = File.ReadLines("carNames.txt");
         foreach (string line in lines)
         {
             this.names.Add(line);

@@ -10,4 +10,10 @@
     <ProjectReference Include="..\NJDOT.Models\NJDOT.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="carNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

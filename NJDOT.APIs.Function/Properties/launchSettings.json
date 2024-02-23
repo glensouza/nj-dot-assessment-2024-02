@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "NJDOT.HR.EmployeeLookup": {
+    "NJDOT.APIs.Function": {
       "commandName": "Project",
       "commandLineArgs": "--port 7105",
       "launchBrowser": false
