@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  Location: "eastus"
+  Location: "centralus"
 
 jobs:
   cleanup-resources:
