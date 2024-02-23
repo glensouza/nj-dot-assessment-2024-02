@@ -1,0 +1,6 @@
+@NJDOT.APIs.WebAPI_HostAddress = http://localhost:5110
+
+GET {{NJDOT.APIs.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
