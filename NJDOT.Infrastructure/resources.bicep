@@ -62,6 +62,9 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
       netFrameworkVersion: 'v8.0'
       remoteDebuggingVersion: 'VS2022'
       managedPipelineMode: 'Integrated'
+      cors: {
+        allowedOrigins: ['*']
+      }
     }
     httpsOnly: true
   }
