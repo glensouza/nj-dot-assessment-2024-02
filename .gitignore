@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# My ignore list
+NJDOT.Infrastructure/ExportedTemplate-NJDOT/
+.github/workflows/minimalapi/backup.yml
+
 # User-specific files
 *.rsuser
 *.suo
