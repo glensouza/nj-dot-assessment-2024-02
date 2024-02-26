@@ -20,6 +20,9 @@
     <ProjectReference Include="..\NJDOT.Services\NJDOT.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="carNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

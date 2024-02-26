@@ -6,9 +6,9 @@ public class NameGenerator
 {
     private readonly List<string> names = [];
 
-    public NameGenerator()
+    public NameGenerator(string fileLocation = "carNames.txt")
     {
-        IEnumerable<string> lines = File.ReadLines("carNames.txt");
+        IEnumerable<string> lines = File.ReadLines(fileLocation);
         foreach (string line in lines)
         {
             this.names.Add(line);
