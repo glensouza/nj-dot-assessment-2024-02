@@ -5,8 +5,8 @@ on:
     branches:
       - "main" 
     paths:
-      - ".github/workflows/mvc.yml"
-      - ".github/workflows/mvc/**"
+      - ".github/workflows/minimalapi.yml"
+      - ".github/workflows/minimalapi/**"
       - "NJDOT.APIs.MinimalAPI/**"
       - "NJDOT.Models/**"
       - "NJDOT.Services/**"
