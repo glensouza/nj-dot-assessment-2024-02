@@ -27,6 +27,7 @@ runs:
       dotnet-version: '8.x'
 
   - name: Build with dotnet
+    shell: bash
     run: |
       cd '.\NJDOT.APIs.MinimalAPI'
       dotnet build --configuration Release
