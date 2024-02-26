@@ -18,7 +18,7 @@ var storageAccountName = '${resourceName}sa'
 var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
 var storageBlobDataContributorRole = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '17d1049b-9a84-46fb-8f53-869881c3d3ab')
 
-var appServicePlanstaticWebAppName = '${resourceName}asp'
+var appServicePlanWebName = '${resourceName}asp'
 var appServicePlanWebAppSKU = 'S1'
 var appServicePlanWebAppTier = 'Standard'
 
@@ -71,7 +71,7 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
 }
 
 resource appServicePlanWebApps 'Microsoft.Web/serverfarms@2023-01-01' = {
-  name: appServicePlanstaticWebAppName
+  name: appServicePlanWebName
   location: location
   sku: {
     name: appServicePlanWebAppSKU
@@ -284,14 +284,6 @@ resource staticWebApp 'Microsoft.Web/staticSites@2020-12-01' = {
     name: 'appsettings'
     properties: {
       APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsights.properties.InstrumentationKey
-    }
-  }
-
-  resource staticSiteBackend 'linkedBackends@2022-09-01' = {
-    name: 'swaBackend'
-    properties: {
-      backendResourceId: functionApp.id
-      region: location
     }
   }
 }
