@@ -46,4 +46,4 @@ runs:
       with:
         app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
         slot-name: 'production'
-        package: .\NJDOT.APIs.MinimalAPI\output
+        package: .\output
