@@ -17,32 +17,32 @@ permissions:
 
 runs:
   using: "composite"
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v3
+  steps:
+  - name: 'Checkout GitHub Action'
+    uses: actions/checkout@v3
 
-    - name: Setup DotNet 8 Environment
-      uses: actions/setup-dotnet@v3
+  - name: Setup DotNet 8 Environment
+    uses: actions/setup-dotnet@v3
+    with:
+      dotnet-version: '8.x'
+
+  - name: 'Build with dotnet'
+    run: |
+      cd '.\NJDOT.APIs.MinimalAPI'
+      dotnet build --configuration Release
+      dotnet publish -c Release  --output ./output
+
+  - name: Login to Azure
+      uses: azure/login@v1
       with:
-        dotnet-version: '8.x'
+        tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+        subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ inputs.AZURE_CLIENT_ID }}
 
-    - name: 'Build with dotnet'
-      run: |
-        cd '.\NJDOT.APIs.MinimalAPI'
-        dotnet build --configuration Release
-        dotnet publish -c Release  --output ./output
-
-    - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          tenant-id: ${{ inputs.AZURE_TENANT_ID }}
-          subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
-          client-id: ${{ inputs.AZURE_CLIENT_ID }}
-
-    - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
-          slot-name: 'production'
-          package: .\NJDOT.APIs.MinimalAPI\output
+  - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
+        slot-name: 'production'
+        package: .\NJDOT.APIs.MinimalAPI\output
