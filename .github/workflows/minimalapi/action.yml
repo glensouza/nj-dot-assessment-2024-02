@@ -33,12 +33,12 @@ runs:
       dotnet build --configuration Release
       dotnet publish -c Release  --output ./output
 
-  - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        tenant-id: ${{ inputs.AZURE_TENANT_ID }}
-        subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
-        client-id: ${{ inputs.AZURE_CLIENT_ID }}
+  - name: Login via Azure
+    uses: azure/login@v1
+    with:
+      tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+      subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.AZURE_CLIENT_ID }}
 
   - name: Deploy to Azure Web App
       id: deploy-to-webapp
