@@ -12,58 +12,38 @@ inputs:
   RESOURCE_NAME:
     required: true
 
+permissions:
+  id-token: write #This is required for requesting the JWT
+
 runs:
   using: "composite"
-  jobs:
-    build:
-      runs-on: windows-latest
-        steps:
-        - name: 'Checkout GitHub Action'
-          uses: actions/checkout@v3
+  steps:
+  - name: 'Checkout GitHub Action'
+    uses: actions/checkout@v3
 
-        - name: Setup DotNet 8 Environment
-          uses: actions/setup-dotnet@v3
-          with:
-            dotnet-version: '8.x'
+  - name: Setup DotNet 8 Environment
+    uses: actions/setup-dotnet@v3
+    with:
+      dotnet-version: '8.x'
 
-        - name: 'Build with dotnet'
-          run: |
-            cd '.\NJDOT.Web.MVC'
-            dotnet build --configuration Release
-            dotnet publish -c Release  --output ./output
+  - name: Build with dotnet
+    shell: bash
+    run: |
+      pushd './NJDOT.Web.MVC'
+      dotnet build --configuration Release
+      dotnet publish -c Release  --output ./output
+      popd
 
-        - name: Upload artifact for deployment job
-          uses: actions/upload-artifact@v3
-          with:
-            name: mvc-app
-            path: .\NJDOT.Web.MVC\output
+  - name: Login via Azure
+    uses: azure/login@v1
+    with:
+      tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+      subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.AZURE_CLIENT_ID }}
 
-    deploy:
-      runs-on: windows-latest
-      needs: build
-      environment:
-        name: 'production'
-        url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-      permissions:
-        id-token: write #This is required for requesting the JWT
-
-      steps:
-        - name: Download artifact from build job
-            uses: actions/download-artifact@v3
-            with:
-              name: mvc-app
-        
-        - name: Login to Azure
-            uses: azure/login@v1
-            with:
-              tenant-id: ${{ inputs.AZURE_TENANT_ID }}
-              subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
-              client-id: ${{ inputs.AZURE_CLIENT_ID }}
-
-        - name: Deploy to Azure Web App
-            id: deploy-to-webapp
-            uses: azure/webapps-deploy@v2
-            with:
-              app-name: '${{ inputs.RESOURCE_NAME }}webapp'
-              slot-name: 'production'
-              package: .
+  - name: Deploy to Azure Web App
+    uses: azure/webapps-deploy@v2
+    with:
+      app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
+      slot-name: 'production'
+      package: ./NJDOT.Web.MVC/output
