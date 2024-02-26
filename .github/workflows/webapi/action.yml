@@ -35,16 +35,15 @@ runs:
       popd
 
   - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        tenant-id: ${{ inputs.AZURE_TENANT_ID }}
-        subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
-        client-id: ${{ inputs.AZURE_CLIENT_ID }}
+    uses: azure/login@v1
+    with:
+      tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+      subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+      client-id: ${{ inputs.AZURE_CLIENT_ID }}
 
   - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: '${{ inputs.RESOURCE_NAME }}webapi'
-        slot-name: 'production'
-        package: ./NJDOT.Web.API/output
+    uses: azure/webapps-deploy@v2
+    with:
+      app-name: '${{ inputs.RESOURCE_NAME }}webapi'
+      slot-name: 'production'
+      package: ./NJDOT.Web.API/output
