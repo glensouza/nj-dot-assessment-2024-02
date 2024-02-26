@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using NJDOT.Models;
 using NJDOT.Services;
 
 namespace NJDOT.APIs.Function;
@@ -24,6 +25,8 @@ public class GenerateCarName
 
         string carName = this.nameGenerator.GetRandomCarName();
 
-        return new OkObjectResult(carName);
+        this.logger.LogInformation("Returning car name: {carName}", carName);
+
+        return new OkObjectResult(new Car { Name = carName });
     }
 }
