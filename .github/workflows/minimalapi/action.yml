@@ -41,9 +41,8 @@ runs:
       client-id: ${{ inputs.AZURE_CLIENT_ID }}
 
   - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
-        slot-name: 'production'
-        package: .\output
+    uses: azure/webapps-deploy@v2
+    with:
+      app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
+      slot-name: 'production'
+      package: .\output
