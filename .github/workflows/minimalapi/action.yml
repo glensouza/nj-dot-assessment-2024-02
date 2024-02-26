@@ -29,10 +29,10 @@ runs:
   - name: Build with dotnet
     shell: bash
     run: |
-      ls -latr
-      cd '.\NJDOT.APIs.MinimalAPI'
+      pushd './NJDOT.APIs.MinimalAPI'
       dotnet build --configuration Release
       dotnet publish -c Release  --output ./output
+      popd
 
   - name: Login via Azure
     uses: azure/login@v1
