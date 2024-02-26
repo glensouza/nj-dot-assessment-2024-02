@@ -29,6 +29,7 @@ runs:
   - name: Build with dotnet
     shell: bash
     run: |
+      ls -latr
       cd '.\NJDOT.APIs.MinimalAPI'
       dotnet build --configuration Release
       dotnet publish -c Release  --output ./output
@@ -45,4 +46,4 @@ runs:
     with:
       app-name: '${{ inputs.RESOURCE_NAME }}minimalapi'
       slot-name: 'production'
-      package: .\output
+      package: .\NJDOT.APIs.MinimalAPI\output
