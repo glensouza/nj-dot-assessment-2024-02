@@ -29,7 +29,7 @@ runs:
   - name: 'Build with dotnet'
     shell: bash
     run: |
-      pushd './NJDOT.Web.API'
+      pushd './NJDOT.WebAPI'
       dotnet build --configuration Release
       dotnet publish -c Release  --output ./output
       popd
@@ -46,4 +46,4 @@ runs:
     with:
       app-name: '${{ inputs.RESOURCE_NAME }}webapi'
       slot-name: 'production'
-      package: ./NJDOT.Web.API/output
+      package: ./NJDOT.WebAPI/output
