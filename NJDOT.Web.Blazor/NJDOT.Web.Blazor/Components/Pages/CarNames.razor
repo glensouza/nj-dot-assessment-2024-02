@@ -3,22 +3,81 @@
 @inject NameGenerator nameGenerator
 @inject CarDoesNotExist carDoesNotExist
 
+@using NJDOT.Models
 @using NJDOT.Services
 
 <h3>Car Names</h3>
 
-<p>Car Name is: @carName</p>
-<img src="@carDoesNotExistImage" alt="Random Car Image" />
+<h4>Vote (@votes.Count)</h4>
+@if (votes.Count > 0)
+{
+    <button class="btn btn-primary" @onclick="VoteForFirstCar">Pick a car</button>
+}
+else
+{
+    <p>There are no more cars to vote on</p>
+}
+
+@if(cars.Count == 0)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (Car car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
+    {
+        <p>Car Name is: @car.CarName (@car.Score) W-@car.Wins L-@car.Losses</p>
+        <img src="@car.CarImage" alt="Random Car Image" />
+    }
+}
 
 @code {
-    private string carName = string.Empty;
-    private string carDoesNotExistImage = string.Empty;
+    private readonly List<Car> cars = new();
+    private readonly List<Vote> votes = new();
+    private double winner = 1200;
+    private double loser = 1200;
 
     protected override async Task OnInitializedAsync()
     {
-        carName = nameGenerator.GetRandomCarName();
-        carDoesNotExistImage = await carDoesNotExist.GetPicture();
+        for (int i = 0; i < 3; i++)
+        {
+            Car newCar = new()
+            {
+                CarImage = await carDoesNotExist.GetPicture(),
+                CarName = nameGenerator.GetRandomCarName()
+            };
+
+            foreach (Car car in cars)
+            {
+                votes.Add(new Vote
+                {
+                    Car1 = newCar.CarName,
+                    Car2 = car.CarName
+                });
+            }
+
+            cars.Add(newCar);
+        }
 
         await base.OnInitializedAsync();
+    }
+
+    private void VoteForFirstCar()
+    {
+        Vote? vote = votes.FirstOrDefault();
+
+        if (vote == null)
+        {
+            return;
+        }
+
+        Car winnerCar = cars.First(c => c.CarName == vote.Car1);
+        Car loserCar = cars.First(c => c.CarName == vote.Car2);
+
+        var calculation = EloCalculator.CalculateElo(winnerCar.Score, loserCar.Score);
+        winnerCar.Score = calculation.Item1;
+        loserCar.Score = calculation.Item2;
+
+        votes.Remove(vote);
     }
 }
