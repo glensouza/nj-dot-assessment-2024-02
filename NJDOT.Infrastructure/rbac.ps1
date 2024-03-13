@@ -11,9 +11,6 @@ Azure Tenant Id.
 .PARAMETER subscriptionId
 Azure Subscription Id.
 
-.PARAMETER tenantId
-Azure Tenant Id.
-
 .PARAMETER applicationName
 Application Name.
 

@@ -1,0 +1,24 @@
+﻿@page "/carnames"
+
+@inject NameGenerator nameGenerator
+@inject CarDoesNotExist carDoesNotExist
+
+@using NJDOT.Services
+
+<h3>Car Names</h3>
+
+<p>Car Name is: @carName</p>
+<img src="@carDoesNotExistImage" alt="Random Car Image" />
+
+@code {
+    private string carName = string.Empty;
+    private string carDoesNotExistImage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        carName = nameGenerator.GetRandomCarName();
+        carDoesNotExistImage = await carDoesNotExist.GetPicture();
+
+        await base.OnInitializedAsync();
+    }
+}
