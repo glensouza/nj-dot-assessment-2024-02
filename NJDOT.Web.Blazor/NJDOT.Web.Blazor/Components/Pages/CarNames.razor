@@ -1,5 +1,7 @@
 ﻿@page "/carnames"
 
+@rendermode InteractiveServer
+
 @inject NameGenerator nameGenerator
 @inject CarDoesNotExist carDoesNotExist
 
@@ -8,14 +10,10 @@
 
 <h3>Car Names</h3>
 
-<h4>Vote (@votes.Count)</h4>
 @if (votes.Count > 0)
 {
-    <button class="btn btn-primary" @onclick="VoteForFirstCar">Pick a car</button>
-}
-else
-{
-    <p>There are no more cars to vote on</p>
+    <h4>Vote (@votes.Count)</h4>
+    <button class="btn btn-primary" @onclick="@VoteForFirstCar">Pick a car</button>
 }
 
 @if(cars.Count == 0)
@@ -26,7 +24,7 @@ else
 {
     @foreach (Car car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
     {
-        <p>Car Name is: @car.CarName (@car.Score) W-@car.Wins L-@car.Losses</p>
+        <p>Car Name is: @car.CarName (@($"{car.Score:N3}")) W-@car.Wins L-@car.Losses</p>
         <img src="@car.CarImage" alt="Random Car Image" />
     }
 }
@@ -74,9 +72,9 @@ else
         Car winnerCar = cars.First(c => c.CarName == vote.Car1);
         Car loserCar = cars.First(c => c.CarName == vote.Car2);
 
-        var calculation = EloCalculator.CalculateElo(winnerCar.Score, loserCar.Score);
-        winnerCar.Score = calculation.Item1;
-        loserCar.Score = calculation.Item2;
+        (double, double) calculation = EloCalculator.CalculateElo(winnerCar.Score, loserCar.Score);
+        winnerCar.Score += calculation.Item1;
+        loserCar.Score += calculation.Item2;
 
         votes.Remove(vote);
     }
