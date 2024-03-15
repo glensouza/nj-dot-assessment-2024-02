@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="car.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="carNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
