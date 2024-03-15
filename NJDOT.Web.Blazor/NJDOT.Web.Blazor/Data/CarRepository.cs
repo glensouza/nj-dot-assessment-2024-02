@@ -9,24 +9,24 @@ public class CarRepository
 
     public List<CarModel> GetAllCars()
     {
-        return this.carContext.Cars.ToList() ?? new List<CarModel>();
+        return carContext.Cars.ToList() ?? new List<CarModel>();
     }
 
     public CarModel? GetCarByName(string carName)
     {
-        return this.carContext.Cars.FirstOrDefault(s => s.CarName == carName);
+        return carContext.Cars.FirstOrDefault(s => s.CarName == carName);
     }
 
     public void AddCar(CarModel entity)
     {
         // Check unique name
-        if (this.GetCarByName(entity.CarName) is not null)
+        if (GetCarByName(entity.CarName) is not null)
         {
             return;
         }
 
         // Add Votes
-        List<CarModel> cars = this.GetAllCars();
+        List<CarModel> cars = GetAllCars();
         foreach (CarModel car in cars.Where(s => s.CarName != entity.CarName))
         {
             VoteModel vote = new()
@@ -34,23 +34,23 @@ public class CarRepository
                 Car1 = entity.CarName,
                 Car2 = car.CarName
             };
-            this.carContext.Votes.Add(vote);
-            this.carContext.SaveChanges();
+            carContext.Votes.Add(vote);
+            carContext.SaveChanges();
         }
 
-        this.carContext.Cars.Add(entity);
-        this.carContext.SaveChanges();
+        carContext.Cars.Add(entity);
+        carContext.SaveChanges();
     }
 
     public int GetVotesLeft()
     {
-        int voteCount = this.carContext.Votes.Count(s => string.IsNullOrEmpty(s.Winner));
+        int voteCount = carContext.Votes.Count(s => string.IsNullOrEmpty(s.Winner));
         return voteCount;
     }
 
     public VoteModel? GetVote()
     {
-        List<VoteModel> votes = this.carContext.Votes.Where(s => string.IsNullOrEmpty(s.Winner)).ToList();
+        List<VoteModel> votes = carContext.Votes.Where(s => string.IsNullOrEmpty(s.Winner)).ToList();
         if (votes.Count == 0)
         {
             return null;
@@ -62,14 +62,14 @@ public class CarRepository
 
     public void VoteForWinner(string voteId, string winner)
     {
-        VoteModel? vote = this.carContext.Votes.FirstOrDefault(s => s.Id == voteId);
+        VoteModel? vote = carContext.Votes.FirstOrDefault(s => s.Id == voteId);
         if (vote is null)
         {
             return;
         }
 
-        CarModel? winningCar = this.GetCarByName(winner);
-        CarModel? losingCar = this.GetCarByName(vote.Car1 == winner ? vote.Car2 : vote.Car1);
+        CarModel? winningCar = GetCarByName(winner);
+        CarModel? losingCar = GetCarByName(vote.Car1 == winner ? vote.Car2 : vote.Car1);
         if (winningCar is null || losingCar is null)
         {
             return;
@@ -78,28 +78,28 @@ public class CarRepository
         (double, double) scores = EloCalculator.CalculateElo(winningCar.Score, losingCar.Score);
         winningCar.Score += scores.Item1;
         winningCar.Wins++;
-        this.carContext.SaveChanges();
+        carContext.SaveChanges();
         losingCar.Score += scores.Item2;
         losingCar.Losses++;
-        this.carContext.SaveChanges();
+        carContext.SaveChanges();
 
         vote.Winner = winner;
         vote.Score = scores.Item1;
-        this.carContext.SaveChanges();
+        carContext.SaveChanges();
     }
 
     public List<VoteModel> GetAllVotes()
     {
-        return this.carContext.Votes.ToList() ?? new List<VoteModel>();
+        return carContext.Votes.ToList() ?? new List<VoteModel>();
     }
 
     public void DeleteCar(string carName)
     {
-        List<VoteModel> votes = this.carContext.Votes.Where(s => s.Car1 == carName || s.Car2 == carName).ToList();
+        List<VoteModel> votes = carContext.Votes.Where(s => s.Car1 == carName || s.Car2 == carName).ToList();
         foreach (VoteModel vote in votes)
         {
-            this.carContext.Votes.Remove(vote);
-            this.carContext.SaveChanges();
+            carContext.Votes.Remove(vote);
+            carContext.SaveChanges();
 
             if (string.IsNullOrEmpty(vote.Winner))
             {
@@ -107,7 +107,7 @@ public class CarRepository
             }
 
             string competitor = vote.Car1 == carName ? vote.Car2 : vote.Car1;
-            CarModel? competingCar = this.GetCarByName(competitor);
+            CarModel? competingCar = GetCarByName(competitor);
             if (competingCar is null)
             {
                 continue;
@@ -124,16 +124,16 @@ public class CarRepository
                 competingCar.Losses--;
             }
 
-            this.carContext.SaveChanges();
+            carContext.SaveChanges();
         }
 
-        CarModel? carByName = this.GetCarByName(carName);
+        CarModel? carByName = GetCarByName(carName);
         if (carByName is null)
         {
             return;
         }
 
-        this.carContext.Cars.Remove(carByName);
-        this.carContext.SaveChanges();
+        carContext.Cars.Remove(carByName);
+        carContext.SaveChanges();
     }
 }
