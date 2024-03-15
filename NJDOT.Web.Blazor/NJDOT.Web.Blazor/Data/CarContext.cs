@@ -7,7 +7,7 @@ public class CarContext : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseInMemoryDatabase("CarsInMemoryDatabase");
+        optionsBuilder.UseInMemoryDatabase("CarDB");
     }
 
     public DbSet<CarModel> Cars { get; set; }
