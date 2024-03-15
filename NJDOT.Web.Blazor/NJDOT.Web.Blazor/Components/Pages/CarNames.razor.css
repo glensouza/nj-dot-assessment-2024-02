@@ -1,0 +1,17 @@
+﻿img.car {
+    width: 300px;
+}
+
+.col-md-3 {
+    margin-top: 25px;
+    padding-bottom: 25px;
+}
+
+h4 {
+    margin-botton: 0;
+}
+
+span {
+    display: block;
+    margin-top: -10px;
+}
