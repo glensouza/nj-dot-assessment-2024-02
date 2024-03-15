@@ -11,8 +11,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-string connectionString = builder.Configuration.GetConnectionString("CarDb") ?? "Data Source=car.db";
-builder.Services.AddSqlite<CarContext>(connectionString);
+string connectionString = builder.Configuration.GetConnectionString("CarDB") ?? throw new InvalidOperationException("Connection string 'CarDB' not found.");
+builder.Services.AddDbContext<CarContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<CarRepository>();
 builder.Services.AddSingleton<NameGenerator>();

@@ -14,11 +14,11 @@ namespace NJDOT.Web.Blazor.Migrations
                 name: "Cars",
                 columns: table => new
                 {
-                    CarName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    CarImage = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Score = table.Column<double>(type: "REAL", nullable: false),
-                    Wins = table.Column<int>(type: "INTEGER", nullable: false),
-                    Losses = table.Column<int>(type: "INTEGER", nullable: false)
+                    CarName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CarImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Score = table.Column<double>(type: "float", nullable: false),
+                    Wins = table.Column<int>(type: "int", nullable: false),
+                    Losses = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,11 +29,11 @@ namespace NJDOT.Web.Blazor.Migrations
                 name: "Votes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Car1 = table.Column<string>(type: "TEXT", nullable: false),
-                    Car2 = table.Column<string>(type: "TEXT", nullable: false),
-                    Winner = table.Column<string>(type: "TEXT", nullable: true),
-                    Score = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Car1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Car2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Winner = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Score = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
