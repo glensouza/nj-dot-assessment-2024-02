@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NJDOT.Services;
 using NJDOT.Web.Blazor.Client.Pages;
 using NJDOT.Web.Blazor.Components;
@@ -10,11 +11,17 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+string connectionString = builder.Configuration.GetConnectionString("CarDb") ?? "Data Source=car.db";
+builder.Services.AddSqlite<CarContext>(connectionString);
+
 builder.Services.AddScoped<CarRepository>();
 builder.Services.AddSingleton<NameGenerator>();
 builder.Services.AddSingleton<CarDoesNotExist>();
 
 var app = builder.Build();
+
+await using CarContext db = app.Services.CreateScope().ServiceProvider.GetRequiredService<CarContext>();
+await db.Database.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
