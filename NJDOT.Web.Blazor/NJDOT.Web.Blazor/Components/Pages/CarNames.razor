@@ -2,11 +2,13 @@
 
 @rendermode InteractiveServer
 
+@inject CarRepository carRepository
 @inject NameGenerator nameGenerator
 @inject CarDoesNotExist carDoesNotExist
 
 @using NJDOT.Models
 @using NJDOT.Services
+@using NJDOT.Web.Blazor.Data
 
 <PageTitle>Car Names</PageTitle>
 
@@ -16,19 +18,20 @@
 }
 else
 {
-    @if (votes.Count > 0)
+    @if (votes.Any(s => string.IsNullOrEmpty(s.Winner)))
     {
+        VoteModel tempVote = votes.FirstOrDefault(s => string.IsNullOrEmpty(s.Winner)) ?? new VoteModel();
         <h4>Vote (@votes.Count)</h4>
         <div class="form-group">
             <!-- display two images side by side -->
             <div class="row">
                 <div class="col-md-6">
-                    <img src="@GetCarImage(votes.FirstOrDefault()?.Car1)" alt="@votes.FirstOrDefault()?.Car1 Car Image"/>
-                    <button class="btn btn-primary" @onclick="() => Vote(votes.FirstOrDefault()?.Car1, votes.FirstOrDefault()?.Car2)">Vote for @votes.FirstOrDefault()?.Car1</button>
+                    <img src="@GetCarImage(tempVote.Car1)" alt="@tempVote.Car1 Car Image"/>
+                    <button class="btn btn-primary" @onclick="() => Vote(tempVote.Id, tempVote.Car1)">Vote for @tempVote.Car1</button>
                 </div>
                 <div class="col-md-6">
-                    <img src="@GetCarImage(votes.FirstOrDefault()?.Car2)" alt="@votes.FirstOrDefault()?.Car2 Car Image"/>
-                    <button class="btn btn-primary" @onclick="() => Vote(votes.FirstOrDefault()?.Car2, votes.FirstOrDefault()?.Car1)">Vote for @votes.FirstOrDefault()?.Car2</button>
+                    <img src="@GetCarImage(tempVote.Car2)" alt="@tempVote.Car2 Car Image" />
+                    <button class="btn btn-primary" @onclick="() => Vote(tempVote.Id, tempVote.Car2)">Vote for @tempVote.Car2</button>
                 </div>
             </div>
         </div>
@@ -44,7 +47,7 @@ else
             </tr>
             </thead>
             <tbody>
-            @foreach (Car car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
+            @foreach (CarModel car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
             {
                 <tr>
                     <td>@car.CarName</td>
@@ -61,7 +64,7 @@ else
         <h3>Cars</h3>
         <div class="form-group">
             <div class="row">
-                @foreach (Car car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
+                @foreach (CarModel car in cars.OrderByDescending(s => s.Score).ThenBy(s => s.CarName))
                 {
                     <div class="col-md-4">
                         <h4>@car.CarName</h4>
@@ -80,49 +83,60 @@ else
                 </div>
             </div>
         </div>
+        <hr />
+        <table>
+            <thead>
+            <tr>
+                <th>Car 1</th>
+                <th>Car 2</th>
+                <th>Score</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (VoteModel vote in votes)
+            {
+                <tr>
+                    <td class="@(vote.Winner == vote.Car1 ? "winner" : string.Empty)">@vote.Car1</td>
+                    <td class="@(vote.Winner == vote.Car2 ? "winner" : string.Empty)">@vote.Car2</td>
+                    <td>@vote.Score.ToString("F3")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
 }
 
 @code {
-    private readonly List<Car> cars = new();
-    private readonly List<Vote> votes = new();
+    private List<CarModel> cars = new();
+    private List<VoteModel> votes = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await GenerateNewCars();
+        votes.AddRange(carRepository.GetAllVotes());
+        cars.AddRange(carRepository.GetAllCars());
+        if (cars.Count == 0)
+        {
+            await GenerateNewCars();
+        }
+
         await base.OnInitializedAsync();
     }
 
-    private void Vote(string? winner, string? loser)
+    private void Vote(string? voteId, string? winner)
     {
-        if (winner == null || loser == null)
+        if (winner == null || voteId == null)
         {
             return;
         }
 
-        Vote? vote = votes.FirstOrDefault(v => (v.Car1 == winner && v.Car2 == loser) || (v.Car2 == winner && v.Car1 == loser));
-
-        if (vote == null)
-        {
-            return;
-        }
-
-        Car winnerCar = cars.First(c => c.CarName == winner);
-        Car loserCar = cars.First(c => c.CarName == loser);
-
-        (double, double) calculation = EloCalculator.CalculateElo(winnerCar.Score, loserCar.Score);
-        winnerCar.Score += calculation.Item1;
-        loserCar.Score += calculation.Item2;
-
-        winnerCar.Wins++;
-        loserCar.Losses++;
-
-        votes.Remove(vote);
+        carRepository.VoteForWinner(voteId, winner);
+        cars = carRepository.GetAllCars();
+        votes = carRepository.GetAllVotes();
     }
 
     private string GetCarImage(string? carName)
     {
-        return carName == null ? string.Empty : this.cars.First(c => c.CarName == carName).CarImage;
+        return carName == null ? string.Empty : cars.First(c => c.CarName == carName).CarImage;
     }
 
     private async Task GenerateNewCars()
@@ -135,34 +149,16 @@ else
                 randomCarName = nameGenerator.GetRandomCarName();
             } while (cars.Any(c => c.CarName == randomCarName));
 
-            Car newCar = new()
+            CarModel newCar = new()
             {
                 CarImage = await carDoesNotExist.GetPicture(),
                 CarName = randomCarName
             };
 
-            foreach (Car car in cars)
-            {
-                bool order = Random.Shared.Next() > int.MaxValue / 2;
-                if (order)
-                {
-                    votes.Add(new Vote
-                    {
-                        Car1 = newCar.CarName,
-                        Car2 = car.CarName
-                    });
-                }
-                else
-                {
-                    votes.Add(new Vote
-                    {
-                        Car1 = car.CarName,
-                        Car2 = newCar.CarName
-                    });
-                }
-            }
-
-            cars.Add(newCar);
+            carRepository.AddCar(newCar);
         }
+
+        cars = carRepository.GetAllCars();
+        votes = carRepository.GetAllVotes();
     }
 }

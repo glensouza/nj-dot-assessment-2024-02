@@ -27,6 +27,6 @@ public class GenerateCarName
 
         this.logger.LogInformation("Returning car name: {carName}", carName);
 
-        return new OkObjectResult(new Car { Name = carName });
+        return new OkObjectResult(new CarModel { CarName = carName });
     }
 }

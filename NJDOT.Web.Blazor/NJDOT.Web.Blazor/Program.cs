@@ -1,6 +1,7 @@
 using NJDOT.Services;
 using NJDOT.Web.Blazor.Client.Pages;
 using NJDOT.Web.Blazor.Components;
+using NJDOT.Web.Blazor.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddScoped<CarRepository>();
 builder.Services.AddSingleton<NameGenerator>();
 builder.Services.AddSingleton<CarDoesNotExist>();
 

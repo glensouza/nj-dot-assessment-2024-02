@@ -5,6 +5,6 @@ WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<NameGenerator>();
 WebApplication? app = builder.Build();
 
-app.MapGet("/GenerateCarName", (NameGenerator nameGenerator) => new Car { Name = nameGenerator.GetRandomCarName() });
+app.MapGet("/GenerateCarName", (NameGenerator nameGenerator) => new CarModel { CarName = nameGenerator.GetRandomCarName() });
 
 app.Run();

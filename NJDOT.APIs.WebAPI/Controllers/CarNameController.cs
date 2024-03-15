@@ -9,12 +9,12 @@ namespace NJDOT.APIs.WebAPI.Controllers
     public class CarNameController(ILogger<CarNameController> logger, NameGenerator nameGenerator) : ControllerBase
     {
         [HttpGet(Name = "GetCarName")]
-        public Car Get()
+        public CarModel Get()
         {
             logger.LogInformation("Getting a random car name");
             string carName = nameGenerator.GetRandomCarName();
             logger.LogInformation("Returning car name: {carName}", carName);
-            return new Car { Name = carName };
+            return new CarModel { CarName = carName };
         }
     }
 }

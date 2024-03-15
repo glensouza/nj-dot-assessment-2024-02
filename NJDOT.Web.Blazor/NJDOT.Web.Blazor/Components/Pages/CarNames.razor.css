@@ -15,3 +15,7 @@ span {
     display: block;
     margin-top: -10px;
 }
+
+td.winner {
+    font-weight: bold;
+}
